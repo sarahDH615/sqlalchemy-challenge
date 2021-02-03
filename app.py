@@ -31,13 +31,25 @@ session = Session(engine)
 latest_date = session.query(Measurement.date).order_by(Measurement.date.desc()).first()
 
 #getting one year before most recent date
-year_before = (dt.date(2017, 8, 23) - dt.timedelta(days=365)).strftime('%Y-%m-%d')
+ld_year = int(latest_date[0][0:4])
+ld_month = int(latest_date[0][5:7])
+ld_day = int(latest_date[0][-2:])
+
+year_before = (dt.date(ld_year, ld_month, ld_day) - dt.timedelta(days=365)).strftime('%Y-%m-%d')
 
 #getting the most_active_station_id
 station_activity = session.query(Measurement.station, Measurement.id).group_by(Measurement.station).order_by(Measurement.id.desc())
 most_active_station_id = station_activity[0][0]
 
+#finding acceptable years list
+years_list = []
+for row in session.query(Measurement.date):
+    years_list.append(row[0][0:4])
+unique_years_list = sorted(list(set(years_list)))
+
 session.close()
+
+default_last_date = int(f'{ld_year}0{ld_month}{ld_day}')
 
 # Flask Setup
 app = Flask(__name__)
@@ -53,7 +65,7 @@ def home():
         f'/api/v1.0/tobs: returns date and temperature observations for the most active station in the dataset<br/>'
         f'/api/v1.0/start: returns list of min temperature, max temperature and average temperature for a given start date range<br/>'
         f'/api/v1.0/start/end: returns list of min temperature, max temperature and average temperature for a given start/end date range<br/>'
-        f'Note: for the last two routes, please use the format yyyymmdd.'
+        f'Note: for the last two routes, please use the format yyyymmdd. The dataset contains information for the years {unique_years_list[0]} to {unique_years_list[-1]}'
     )
 
 
@@ -91,16 +103,6 @@ def stations():
 def temps():
     session = Session(engine)
 
-    #getting most recent date
-    #latest_date = session.query(Measurement.date).order_by(Measurement.date.desc()).first()
-
-    #getting one year before most recent date
-    #year_before = (dt.date(2017, 8, 23) - dt.timedelta(days=365)).strftime('%Y-%m-%d')
-
-    #getting the most_active_station_id
-    #station_activity = session.query(Measurement.station, Measurement.id).group_by(Measurement.station).order_by(Measurement.id.desc())
-    #most_active_station_id = station_activity[0][0]
-
     #filling the list of temperatures for the most active station, w/in the last year
     temps_list = []
     for row in session.query(Measurement.tobs).filter(Measurement.station == most_active_station_id).filter(Measurement.date >= year_before):
@@ -110,8 +112,49 @@ def temps():
 
     return jsonify(temps_list)  
 
+#route for only start date given
+@app.route('/api/v1.0/<start>')
+def start_date_lookup(start):
+    session = Session(engine)
+    
+    #if date format or wrong year is put in, return error message
+    if start[0:4] not in unique_years_list:
+        return (
+            f'error: date not found. Reminder: use yyyymmdd format<br/>'
+            f'Years available: {unique_years_list}'
+        )
+    #reformatting start and end dates
+    start_year = str(start)[0:4]
+    start_month = str(start)[4:6]
+    start_day = str(start)[-2:]
+    start_search = dt.date(int(start_year), int(start_month), int(start_day)).strftime('%Y-%m-%d')
+
+    #querying for temps for station id, btwn the time frames
+    max_temp = session.query(
+        func.max(Measurement.tobs)).filter(
+            Measurement.station == most_active_station_id, Measurement.date >= start_search
+            ).scalar()
+    min_temp = session.query(func.min(Measurement.tobs)).filter(
+        Measurement.station == most_active_station_id, Measurement.date >= start_search
+        ).scalar()
+    avg_temp = session.query(func.avg(Measurement.tobs)).filter(
+        Measurement.station == most_active_station_id, Measurement.date >= start_search
+        ).scalar()
+
+    session.close()
+
+    temp_for_station_dict = {
+        f'minimum temperature in date range {start_search} to {latest_date[0]}': min_temp,
+        f'maximum temperature in date range {start_search} to {latest_date[0]}': max_temp,
+        f'average temperature in date range {start_search} to {latest_date[0]}': round(avg_temp, 2)
+    }
+    return jsonify(temp_for_station_dict)  
+
+
+
+#route for start and end dates given
 @app.route('/api/v1.0/<start>/<end>')
-def date_lookup(start, end=str(latest_date).replace('-', '')):
+def full_date_lookup(start, end):
     session = Session(engine)
     #finding acceptable years list
     years_list = []
@@ -153,7 +196,7 @@ def date_lookup(start, end=str(latest_date).replace('-', '')):
     temp_for_station_dict = {
         f'minimum temperature in date range {start_search} to {end_search}': min_temp,
         f'maximum temperature in date range {start_search} to {end_search}':max_temp,
-        f'average temperature in date range {start_search} to {end_search}': avg_temp
+        f'average temperature in date range {start_search} to {end_search}': round(avg_temp, 2)
     }
     return jsonify(temp_for_station_dict)  
 
