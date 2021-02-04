@@ -71,6 +71,8 @@ The goal of climate_starter.ipynb was to create a bar graph of rainfall over the
         - setting the id column as the index of temps_df
     - graphing the histogram
         - calling .hist() on temps_df, using 12 bins, and a zorder of 3 to have the bars show in front of the grid
+- summary statistics for temperature data
+    - calling .describe() on temps_df dataframe
     
 The goal of app.py was to build on the analysis done in climate_starter.ipynb, and display queries relating to the precipitation, station, and temperature measurements from hawaii.sqlite on static webpages. Additionally, the file would contain routes to create dynamic webpages that would take user input to display temperature statistics for chosen dates. The following steps were taken to achieve these goals:
 - setting up the database within the file
@@ -145,6 +147,8 @@ The goal of app.py was to build on the analysis done in climate_starter.ipynb, a
 - allowing the application to run in the Terminal
 
 ### challenges/observations
+
+The greatest challenge within this project was properly graphing the precipitation data. An initial graphing attempt led to the x axis labels being illegible, as each data point has a 3 part date as a label, and there are 2230 data points to fit on one plot. One solution, if each date had the same amount of data points, would be to label only the first data point for each date. However, the dates varied in terms of how many data points they had, so this could not be done simply. Morever, even if there were an equal amount of data points per date, that would still be 365 labels, which is still unwieldy for a plot. The solution that was implemented was to assign x-ticks, and x-labels, for every 250 points, resulting in 9 labels. This leads to an uncluttered plot and provides a good overview of the year, but reduces clarity, if one wants to trace a spike in data using just the graph. Graphing over smaller spans of time would probably be the best way of visually identifying points of interest. 
 
 The summary statistics table and bar chart showing precipitation data between 23 August 2016 and 23 August 2017 reveals that Hawai'i generally had low levels of rainfall throughout the year, with an average rainfall of less than 1/5 of an inch (0.161), with several spikes of rainfall throughout the year, with its highest rainfall of the year on 14 November 2016. A further point of research could be to compare the average of this time period to the average of each other year period, and the years overall, as well as the graphs of each year's data, as a way of determining whether the pattern shown in this graph is typical. 
 
