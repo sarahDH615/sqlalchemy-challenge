@@ -1,3 +1,4 @@
+#dependencies
 import numpy as np
 
 import sqlalchemy
@@ -9,7 +10,7 @@ from flask import Flask, jsonify
 
 import pandas as pd
 import datetime as dt
-
+#---------------------------------------------------------------------------------------------
 
 
 # Database Setup
@@ -23,7 +24,7 @@ Base.prepare(engine, reflect=True)
 # Save reference to the table
 Measurement = Base.classes.measurement
 Station = Base.classes.station
-
+#---------------------------------------------------------------------------------------------
 
 #creating variables for later use
 session = Session(engine)
@@ -38,8 +39,8 @@ ld_day = int(latest_date[0][-2:])
 year_before = (dt.date(ld_year, ld_month, ld_day) - dt.timedelta(days=365)).strftime('%Y-%m-%d')
 
 #getting the most_active_station_id
-station_activity = session.query(Measurement.station, Measurement.id).group_by(Measurement.station).order_by(Measurement.id.desc())
-most_active_station_id = station_activity[0][0]
+station_count = session.query(Measurement.station, func.count(Measurement.id)).group_by(Measurement.station).order_by(func.count(Measurement.id).desc())
+most_active_station_id = station_count[0][0]
 
 #finding acceptable years list
 years_list = []
@@ -51,6 +52,8 @@ session.close()
 
 default_last_date = int(f'{ld_year}0{ld_month}{ld_day}')
 
+#---------------------------------------------------------------------------------------------
+
 # Flask Setup
 app = Flask(__name__)
 
@@ -59,13 +62,13 @@ app = Flask(__name__)
 def home():
     print('Server received request for home page...')
     return (
-        f'Welcome to the home page. These are the available routes: <br/>'
-        f'/api/v1.0/precipitation: returns dictionary of with dates as keys, and precipitation amount as values, for the last 12 months in the dataset<br/>'
+        f'<h3>Welcome to the home page. These are the available routes: </h3><br/>'
+        f'/api/v1.0/precipitation: returns dictionary with dates as keys, and precipitation amounts as values, for the last 12 months in the dataset<br/>'
         f'/api/v1.0/stations: returns list of stations <br/>'
-        f'/api/v1.0/tobs: returns date and temperature observations for the most active station in the dataset<br/>'
-        f'/api/v1.0/start: returns list of min temperature, max temperature and average temperature for a given start date range<br/>'
-        f'/api/v1.0/start/end: returns list of min temperature, max temperature and average temperature for a given start/end date range<br/>'
-        f'Note: for the last two routes, please use the format yyyymmdd. The dataset contains information for the years {unique_years_list[0]} to {unique_years_list[-1]}'
+        f'/api/v1.0/tobs: returns date and temperature observations for the most active station ({most_active_station_id}) in the dataset<br/>'
+        f'/api/v1.0/start: returns list of minimum temperature, maximum temperature and average temperature for a date range between a user-input start date, and the end date of the dataset ({ld_year}-0{ld_month}-{ld_day})<br/>'
+        f'/api/v1.0/start/end: returns list of minimum temperature, maximum temperature and average temperature for a user-input start/end date range<br/>'
+        f'<h4>Note: for the last two routes, please use the format yyyymmdd, using a zero before a single-digit month or day. The dataset contains information for the years {unique_years_list[0]} to {unique_years_list[-1]}.</h4>'
     )
 
 
