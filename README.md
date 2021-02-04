@@ -20,7 +20,7 @@ The goal of climate_starter.ipynb was to create a bar graph of rainfall over the
             - querying the date column in the Measurement table, ordering the dates in descending order, and returning the first result (the 'greatest' date, or, the most recent date); saving that result to the variable latest_date
             - separating latest_date into year, month, and day components (ld_year, ld_month, ld_day) for use within datetime
         - finding the date a year before the final date
-            - creating a datetime object out of the components of latest_date (dt.date(ld_year, ld_month, ld_day))
+            - creating a date object out of the components of latest_date (dt.date(ld_year, ld_month, ld_day))
             - creating another datetime object that would be a year before latest_date (dt.timedelta(days=365))
             - subtracting the second datetime object from the first, and formatting it to fit the date structure within the Measurement date column (.strftime('%Y-%m-%d)), and saving the result to variable year_before
     - creating a dataframe of the last 12 months precipitation data to graph from
@@ -90,17 +90,55 @@ The goal of app.py was to build on the analysis done in climate_starter.ipynb, a
             - print the request made to the Terminal
             - open a session
             - reuse the code from the jupyter notebook, querying the Measurement table, filtering for all dates greater than or equal to year_before, and save it to the variable pdata
-            - create a for loop to append the date from each row in pdata to an empty dictionary prcp_dict
+            - create a for loop to append the date from each row in pdata as a key, and the precipitation from each row as a value, to an empty dictionary prcp_dict
             - close the session
             - return the jsonified prcp_dict
     - stations route to list stations in the database
         - defining stations() function to:
             - print the request made to the Terminal
             - open a session
-            - edit code from jupyter notebook, querying to join the Station and Measurement tables, filtering where the Station station column matches the Measurement station column, and select the Measurement table's station column, and the Station table's name column
+            - edit code from jupyter notebook, querying to join the Station and Measurement tables, filtering where the Station table's station column matches the Measurement station column, and select the Measurement table's station column, and the Station table's name column
             - create a for loop over the query to append the second item in each row (each station's name) to an empty list stations_list
             - close the session
             - return the jsonifed stations_list
-
+    - tobs route to list the temperature observations for each date for the most active station ID in the database
+        - defining temps() function to:
+            - print the request made to the Terminal
+            - open a session
+            - query the Measurement table's tobs column, filtering where the station column matches most_active_station_id, where the date is greater than or equal to year_before
+            - create a for loop over the query to append the first item in each row to an empty list temps_list
+            - close the session
+            - return the jsonifed temps_list
+    - start route to list the minimum, maximum, and average temperature for the most active station, within a date range from a start date inputted by the user, to the last date in the dataset
+        - defining start_date_lookup() function, taking the user input variable 'start' to:
+            - print the request made to the Terminal
+            - open a session
+            - create a conditional to return an error message if the date format is wrong, or the year entered is not within the dataset
+                - comparing the first four characters within 'start' to the unique_years_list
+                - returning an error with a reminder of the date format and the years available
+            - prepare the user input 'start' for querying
+                - setting 'start' as type string, and splitting it into year, month, and day sections (start_year, start_month, start_day)
+                - setting the sections of start as type integer for use within datetime, then using datetime to create a date object, and formatting it with dashes to fit the style of the Measurement table, saving it to the variable start_search
+            - edit the code in the jupyter notebook to query the Measurement table's tobs column, applying the func.max() function to it, filtering for the rows where the station is the most_active_station_id, and the date is greater than or equal to start_search, and saving the result as max_temp
+            - repeat the process for the minimum and average temperature, using func.min() and func.avg() to create the variables min_temp and avg_temp
+            - close the session
+            - create a dictionary, temp_for_station_dict, with 'minimum temperature', 'maximum temperature', and 'average temperature' labels as keys, and max_temp, min_temp, and avg_temp (the last rounded to two decimal places) as values
+            - return the jsonified temp_for_station_dict
+    - start/end route to list the minimum, maximum, and average temperature for the most active station, within a date range from a start and end date inputted by the user
+        - defining full_date_lookup() function, taking the user input variables 'start' and 'end' to:
+            - print the request made to the Terminal
+            - open a session
+            - create a conditional to return an error message if the date format is wrong, or the year entered is not within the dataset
+                - comparing the first four characters within 'start' to the unique_years_list
+                - returning an error with a reminder of the date format and the years available
+            - prepare the user inputs 'start' and 'end' for querying
+                - setting 'start' and 'end' as type string, and splitting it into year, month, and day sections (start_year, start_month, start_day, end_year, end_month, end_day)
+                - setting the sections of start and end as type integer for use within datetime, then using datetime to create a date object, and formatting it with dashes to fit the style of the Measurement table, saving it to the variables start_search and end_search
+            - edit the code in the jupyter notebook to query the Measurement table's tobs column, applying the func.max() function to it, filtering for the rows where the station is the most_active_station_id, and the date is between start_search and end_search, and saving the result as max_temp
+            - repeat the process for the minimum and average temperature, using func.min() and func.avg() to create the variables min_temp and avg_temp
+            - close the session
+            - create a dictionary, temp_for_station_dict, with 'minimum temperature', 'maximum temperature', and 'average temperature' labels as keys, and max_temp, min_temp, and avg_temp (the last rounded to two decimal places) as values
+            - return the jsonified temp_for_station_dict
+- allowing the application to run in the Terminal
 
 ### challenges/observations
