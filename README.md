@@ -53,7 +53,7 @@ The goal of climate_starter.ipynb was to create a bar graph of rainfall over the
     - finding the number of stations within the Measurement table
         - querying the Measurement table's station column, grouping by the station column, and applying .count()
     - conducting an inner join and counting the stations from the resulting join
-        - joining the Measurement table's station column and the Station table's id column filtering where the two columns match, grouping by the id column, and calling .count()
+        - joining the Measurement table's station column and the Station table's name column filtering where the two columns match, grouping by the id column, and calling .count()
 - creating a histogram of the distribution of the temperature measurements on the most prolific station
     - finding the station with the most measurements
         - querying the Measurement table for the station column and the count of the id column, grouping by the station column, ordering by the count of the id column in descending order, and saving the result to a variable stations_count
@@ -70,5 +70,37 @@ The goal of climate_starter.ipynb was to create a bar graph of rainfall over the
         - calling .hist() on temps_df, using 12 bins, and a zorder of 3 to have the bars show in front of the grid
     
 The goal of app.py was to build on the analysis done in climate_starter.ipynb, and display queries relating to the precipitation, station, and temperature measurements from hawaii.sqlite on static webpages. Additionally, the file would contain routes to create dynamic webpages that would take user input to display temperature statistics for chosen dates. The following steps were taken to achieve these goals:
+- setting up the database within the file
+    - using create_engine to make a connection with the sqlite database
+    - using Base (automap_base()) to reflect the database into the file
+    - using Base to save the Measurement and Station tables (already known from previously opening the database within the jupyter notebook) into classes for use in the file
+- creating variables for use across multiple routes/functions
+    - opening a session with the sqlite database
+    - re-using code from jupyter notebook for defining latest_date, ld_year, ld_month, ld_day, year_before, most_active_station_id
+    - querying Measurement table's date column, appending the first four digits (the year) within each row's first element to years_list, making a set of and sorting the list to create unique_years_list
+- setting up Flask and creation of routes
+    - home route to list available routes
+        - defining home() function to:
+            - print the request made to the Terminal
+            - open a session
+            - return available routes with descriptions, followed by a note of the format to follow for entering dates for the user-input routes
+            - close the session
+    - precipitation route to return all the precipitation data for the last year in the dataset
+        - defining precipitation() function to:
+            - print the request made to the Terminal
+            - open a session
+            - reuse the code from the jupyter notebook, querying the Measurement table, filtering for all dates greater than or equal to year_before, and save it to the variable pdata
+            - create a for loop to append the date from each row in pdata to an empty dictionary prcp_dict
+            - close the session
+            - return the jsonified prcp_dict
+    - stations route to list stations in the database
+        - defining stations() function to:
+            - print the request made to the Terminal
+            - open a session
+            - edit code from jupyter notebook, querying to join the Station and Measurement tables, filtering where the Station station column matches the Measurement station column, and select the Measurement table's station column, and the Station table's name column
+            - create a for loop over the query to append the second item in each row (each station's name) to an empty list stations_list
+            - close the session
+            - return the jsonifed stations_list
+
 
 ### challenges/observations
