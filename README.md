@@ -47,6 +47,9 @@ The goal of climate_starter.ipynb was to create a bar graph of rainfall over the
             - using zorder to set the grid behind the bars
 - summary statistics for precipitation data
     - calling .describe() on prcp_data dataframe
+- finding the date within the last year with the highest rainfall
+    - calling max() on the precipitation column within prcp_data
+    - filtering prcp_data for where the precipitation was at its maximum value
 - finding the number of stations within the dataset
     - finding the number of stations within the Station table
         - querying the Station table's id column, grouping by the id column, and applying .count()
@@ -142,3 +145,7 @@ The goal of app.py was to build on the analysis done in climate_starter.ipynb, a
 - allowing the application to run in the Terminal
 
 ### challenges/observations
+
+The summary statistics table and bar chart showing precipitation data between 23 August 2016 and 23 August 2017 reveals that Hawai'i generally had low levels of rainfall throughout the year, with an average rainfall of less than 1/5 of an inch (0.161), with several spikes of rainfall throughout the year, with its highest rainfall of the year on 14 November 2016. A further point of research could be to compare the average of this time period to the average of each other year period, and the years overall, as well as the graphs of each year's data, as a way of determining whether the pattern shown in this graph is typical. 
+
+The histogram shows a slighly asymmetrical, but still fairly bell-shaped curve for the temperature measurements for the most prolific station, over 23 August 2016-23 August 2017. For that year, and for that station, the majority (within one standard deviation of the mean) of the measurements fell between 68.38 and 77.84 F, showing a fairly mild climate. The average temperature and distribution could be compared across the years in the dataset to see if the average temperatures have risen or fallen, although the dataset's span could be too short to pull out significant trends. The decision to look at the station with the most measurements is so as to attempt to avoid a small dataset being overwhelmed by outliers. 
