@@ -50,8 +50,6 @@ unique_years_list = sorted(list(set(years_list)))
 
 session.close()
 
-default_last_date = int(f'{ld_year}0{ld_month}{ld_day}')
-
 #---------------------------------------------------------------------------------------------
 
 # Flask Setup
@@ -159,11 +157,6 @@ def start_date_lookup(start):
 @app.route('/api/v1.0/<start>/<end>')
 def full_date_lookup(start, end):
     session = Session(engine)
-    #finding acceptable years list
-    years_list = []
-    for row in session.query(Measurement.date):
-        years_list.append(row[0][0:4])
-    unique_years_list = list(set(years_list))
     
     #if date format or wrong year is put in, return error message
     if start[0:4] not in unique_years_list:
