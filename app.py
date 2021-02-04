@@ -128,13 +128,13 @@ def start_date_lookup(start):
             f'error: date not found. Reminder: use yyyymmdd format<br/>'
             f'Years available: {unique_years_list}'
         )
-    #reformatting start and end dates
+    #reformatting start date
     start_year = str(start)[0:4]
     start_month = str(start)[4:6]
     start_day = str(start)[-2:]
     start_search = dt.date(int(start_year), int(start_month), int(start_day)).strftime('%Y-%m-%d')
 
-    #querying for temps for station id, btwn the time frames
+    #querying for temps for station id, dates after the start date
     max_temp = session.query(
         func.max(Measurement.tobs)).filter(
             Measurement.station == most_active_station_id, Measurement.date >= start_search
