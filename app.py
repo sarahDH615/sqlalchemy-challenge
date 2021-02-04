@@ -72,6 +72,7 @@ def home():
 
 @app.route('/api/v1.0/precipitation')
 def precipitation():
+    print('Server received request for precipitation page...')
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
@@ -89,6 +90,7 @@ def precipitation():
 
 @app.route('/api/v1.0/stations')
 def stations():
+    print('Server received request for stations page...')
     session = Session(engine)
 
     stations_list = []
@@ -102,6 +104,7 @@ def stations():
 
 @app.route('/api/v1.0/tobs')
 def temps():
+    print('Server received request for temperatures page...')
     session = Session(engine)
 
     #filling the list of temperatures for the most active station, w/in the last year
@@ -116,6 +119,7 @@ def temps():
 #route for only start date given
 @app.route('/api/v1.0/<start>')
 def start_date_lookup(start):
+    print('Server received request for start-input temperature data page...')
     session = Session(engine)
     
     #if date format or wrong year is put in, return error message
@@ -152,10 +156,10 @@ def start_date_lookup(start):
     return jsonify(temp_for_station_dict)  
 
 
-
 #route for start and end dates given
 @app.route('/api/v1.0/<start>/<end>')
 def full_date_lookup(start, end):
+    print('Server received request for start- and end-input temperature data page...')
     session = Session(engine)
     
     #if date format or wrong year is put in, return error message
