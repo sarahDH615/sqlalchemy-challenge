@@ -49,6 +49,12 @@ The goal of climate_starter.ipynb was to create a bar graph of rainfall over the
             - using list num_of_x to set the xticks
             - using list x_labels to set the xtick labels
             - using zorder to set the grid behind the bars
+<figure>
+    <img src='images/precip20162017_bar.png'
+         alt="precipitation bar graph for 23 August 2016 - 23 August 2017"
+         align='middle'>
+</figure>
+
 - summary statistics for precipitation data
     - calling .describe() on prcp_data dataframe
 - finding the date within the last year with the highest rainfall
@@ -155,6 +161,7 @@ The goal of temp_analysis1.ipynb was to determine whether there is a statistical
     - using pd.read_csv to load the CSV into a dataframe (df)
     - converting the data type of the date column in df from 'string' to 'datetime', so they would be read as dates by python
     - setting the date column as the index of df
+    - dropping any rows with null values in any of the columns
 - Extracting data for target months (June, December)
     - creating new dataframes (june_df, dec_df) where the month in the date index is limited to '6' (for June) or '12' (for December)
     - finding the average temperature for June/December (june_mean, dec_mean)
@@ -194,10 +201,37 @@ The goal of temp_analysis2.ipynb was to predict the rainfall and temperature dur
     - using date_list, tmins, tmaxs, and tavgs to make the dataframe normals_df, setting the index as the date
     - area plot of daily normals
         - using pd.plot.area to create an area plot of the temperature daily normals for all dates within 1-7 August for each year in the dataset
+
 ### challenges/observations
 
-The greatest challenge within this project was properly graphing the precipitation data. An initial graphing attempt led to the x axis labels being illegible, as each data point has a 3 part date as a label, and there are 2230 data points to fit on one plot. One solution, if each date had the same amount of data points, would be to label only the first data point for each date. However, the dates varied in terms of how many data points they had, so this could not be done simply. Morever, even if there were an equal amount of data points per date, that would still be 365 labels, which is still unwieldy for a plot. The solution that was implemented was to assign x-ticks, and x-labels, for every 250 points, resulting in 9 labels. This leads to an uncluttered plot and provides a good overview of the year, but reduces clarity, if one wants to trace a spike in data using just the graph. Graphing over smaller spans of time would probably be the best way of visually identifying points of interest. 
+#### challenges
+##### precipitation data bar graph (climate_analysis.ipynb)
+One challenge within this project was properly graphing the precipitation data in climate_analysis.ipynb. An initial graphing attempt led to the x axis labels being illegible, as each data point has a 3 part date as a label, and there are 2230 data points to fit on one plot. 
 
-The summary statistics table and bar chart showing precipitation data between 23 August 2016 and 23 August 2017 reveals that Hawai'i generally had low levels of rainfall throughout the year, with an average rainfall of less than 1/5 of an inch (0.161), with several spikes of rainfall throughout the year, with its highest rainfall of the year on 14 November 2016. A further point of research could be to compare the average of this time period to the average of each other year period, and the years overall, as well as the graphs of each year's data, as a way of determining whether the pattern shown in this graph is typical. 
+One solution, if each date had the same amount of data points, would be to label only the first data point for each date. However, the dates varied in terms of how many data points they had, so this could not be done simply. Morever, even if there were an equal amount of data points per date, that would still be 365 labels, which is still unwieldy for a plot. 
 
-The histogram shows a slighly asymmetrical, but still fairly bell-shaped curve for the temperature measurements for the most prolific station, over 23 August 2016-23 August 2017. For that year, and for that station, the majority (within one standard deviation of the mean) of the measurements fell between 68.38 and 77.84 F, showing a fairly mild climate. The average temperature and distribution could be compared across the years in the dataset to see if the average temperatures have risen or fallen, although the dataset's span could be too short to pull out significant trends. The decision to look at the station with the most measurements is so as to attempt to avoid a small dataset being overwhelmed by outliers. 
+The solution that was implemented was to assign x-ticks, and x-labels, for every 250 points, resulting in 9 labels. This leads to an uncluttered plot and provides a good overview of the year, but reduces clarity, if one wants to trace a spike in data using just the graph. Graphing over smaller spans of time would probably be the best way of visually identifying points of interest. 
+
+##### t-test on June and December temperatures (temp_analysis1.ipynb)
+Another point of difficulty was in deciding the type of t-test to use in temp_analysis1.ipynb. Comparing weather station measurements at the same place(s) at different times seemed like a good candidate for a paired t-test, as it fits the concept of the same subjects at different times/under different conditions. However, a paired t-test requires arrays of the same length: even after dropping rows with no/missing data, the June and December data frames had different lengths. 
+
+One might think a solution could be to go through the dataframes and drop all rows with duplicate dates, but since the months have different numbers of days in them, it would still not lead to an equal number of data points. Moreover, that would make for smaller data sets, which can be more prone to outliers. 
+
+The solution that was finally implemented was to use the library random to take a sample from the larger (June) dataset equal in number to the December data set, and run the paired t-test using the sample from June and the full December set. In order to offset the effect of taking a sample, not the whole dataset, the t-test was done inside a for loop so that the test could be run 10,000 times.During each run of the loop, the sampling was re-done, so that different data was selected from june_temps, to test whether slightly different data would change the significance value of the t-test. All runs of the loop resulted in p-values equal to or less than 0.05, meaning there was a statistically significant difference in means for each generated version of the June data sample.  
+
+#### observations
+##### climate_analysis.ipynb
+
+The summary statistics table and bar chart in climate_analysis.ipynb, showing precipitation data between 23 August 2016 and 23 August 2017 reveals that Hawai'i generally had low levels of rainfall throughout the year, with an average rainfall of less than 1/5 of an inch (0.161), with several spikes of rainfall throughout the year, with its highest rainfall of the year on 14 November 2016. A further point of research could be to compare the average of this time period to the average of each other year period, and the years overall, as well as the graphs of each year's data, as a way of determining whether the pattern shown in this graph is typical. 
+
+The histogram from the same notebook shows a slighly asymmetrical, but still fairly bell-shaped curve for the temperature measurements for the most prolific station, over 23 August 2016-23 August 2017. For that year, and for that station, the majority (within one standard deviation of the mean) of the measurements fell between 68.38 and 77.84 F, showing a fairly mild climate. The average temperature and distribution could be compared across the years in the dataset to see if the average temperatures have risen or fallen, although the dataset's span could be too short to pull out significant trends. The decision to look at the station with the most measurements is so as to attempt to avoid a small dataset being overwhelmed by outliers. 
+
+##### temp_analysis1.ipynb
+
+As discussed in the analysis section in temp_analysis1.ipynb, the t-test showed a statistically significant difference in June and December average temperatures, although the difference is only four degrees Fahreneheit. T-tests could be done on other climate factors in order to get a fuller picture of the feeling of being in Hawai'i during those months. 
+
+##### temp_analysis2.ipynb
+
+The premise behind temp_analysis2.ipynb was determining whether the week of 1 - 7 August had temperatures and rainfall appropriate for a holiday. Based on the data from that date range in 2017, one could expect temperatures between 72 and 83 F (the maximum and minimum temperature values) and an average temperature of 79.25 F. Observing the normals_df area plot shows the temperature staying relatively constant over the whole period. 
+
+The weather station with the highest total amount of rainfall over the period showed less than half (0.36) of an inch of rain, with 3/5 of the weather stations showing less than a tenth of an inch of rain. Overall, 1 - 7 August would appear to be a good time to go to Hawai'i, with mild contstant temperatures and low levels of rain. A potential issue with this prediction is the length of the data set. The temperature prediction only relies on one year's data, which could have been an outlier. Seven years of data used in the rainfall also might not be enough to observe trends in rainfall. 
