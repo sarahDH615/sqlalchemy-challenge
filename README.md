@@ -51,8 +51,7 @@ The goal of climate_starter.ipynb was to create a bar graph of rainfall over the
             - using zorder to set the grid behind the bars
 <figure>
     <img src='images/precip20162017_bar.png'
-         alt="precipitation bar graph for 23 August 2016 - 23 August 2017"
-         align='middle'>
+         alt="precipitation bar graph for 23 August 2016 - 23 August 2017">
 </figure>
 
 - summary statistics for precipitation data
