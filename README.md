@@ -49,10 +49,10 @@ The goal of climate_starter.ipynb was to create a bar graph of rainfall over the
             - using list num_of_x to set the xticks
             - using list x_labels to set the xtick labels
             - using zorder to set the grid behind the bars
-<p align='center'>
+<div align='center'>
     <img src='images/precip20162017_bar.png'
          alt="precipitation bar graph for 23 August 2016 - 23 August 2017">
-</p>
+</div>
 
 - summary statistics for precipitation data
     - calling .describe() on prcp_data dataframe
@@ -189,10 +189,10 @@ The goal of temp_analysis2.ipynb was to predict the rainfall and temperature dur
         - using plt.bar to plot one bar, with the height of the bar representing the average temperature over the chosen time period
         - the y-error bar is the difference between the minimum temperature and the maximum temperature (peak-to-peak)
 
-<p align='center'>
+<div align='center'>
     <img src='images/avg_temp_aug.png'
          alt="precipitation bar graph for 23 August 2016 - 23 August 2017">
-</p>
+</div>
 
 - total rainfall over 1-7 August 2017
     - using datetime to create date objects of the chosen dates, formatted in the style of the database table dates, for use in queries, saving as variables start_date, end_date 
@@ -212,10 +212,10 @@ The goal of temp_analysis2.ipynb was to predict the rainfall and temperature dur
     - area plot of daily normals
         - using pd.plot.area to create an area plot of the temperature daily normals for all dates within 1-7 August for each year in the dataset
 
-<p align='center'>
+<div align='center'>
     <img src='images/normals_temp_area.png'
          alt="precipitation bar graph for 23 August 2016 - 23 August 2017">
-</p>
+</div>
 
 ### challenges/observations
 
@@ -250,9 +250,3 @@ As discussed in the analysis section in temp_analysis1.ipynb, the t-test showed 
 The premise behind temp_analysis2.ipynb was determining whether the week of 1 - 7 August had temperatures and rainfall appropriate for a holiday. Based on the data from that date range in 2017, one could expect temperatures between 72 and 83 F (the maximum and minimum temperature values) and an average temperature of 79.25 F. Observing the normals_df area plot shows the temperature staying relatively constant over the whole period. 
 
 The weather station with the highest total amount of rainfall over the period showed less than half (0.36) of an inch of rain, with 3/5 of the weather stations showing less than a tenth of an inch of rain. Overall, 1 - 7 August would appear to be a good time to go to Hawai'i, with mild contstant temperatures and low levels of rain. A potential issue with this prediction is the length of the data set. The temperature prediction only relies on one year's data, which could have been an outlier. Seven years of data used in the rainfall also might not be enough to observe trends in rainfall. 
-
-.middle {
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-}
