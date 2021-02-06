@@ -80,7 +80,7 @@ The goal of climate_starter.ipynb was to create a bar graph of rainfall over the
         - setting the id column as the index of temps_df
     - graphing the histogram
         - calling .hist() on temps_df, using 12 bins, and a zorder of 3 to have the bars show in front of the grid
-<div style="text-align:center">
+<div style="text-align:center;">
     <img src='images/temp_hist.png' 
         alt="precipitation bar graph for 23 August 2016 - 23 August 2017">
 </div>
