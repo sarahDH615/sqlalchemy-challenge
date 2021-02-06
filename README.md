@@ -1,8 +1,12 @@
 # sqlalchemy-challenge
 
 ### contains
-- hawaii.sqlite: source database for dataset containing precipitation data for weather stations in Hawai'i
-- climate_starter.ipynb: a jupyter notebook showing analysis of hawaii.sqlite resulting in graphs
+- resources folder:
+    - hawaii.sqlite: source database for climate_analysis.ipynb and temp_analysis2.ipynb, containing precipitation, temperature, and station data for weather stations in Hawai'i
+    - hawaii_measurements.csv: source CSV for temp_analysis1.ipynb, containing precipitation and temperature data for weather stations in Hawai'i
+- climate_starter.ipynb: a jupyter notebook showing analysis of hawaii.sqlite resulting in graphs of rainfall and temperature over the last 12 months in the data set
+- temp_analysis1.ipynb: a jupyter notebook showing analysis of hawaii_measurements.csv, resulting in a paired t-test
+- temp_analysis2.ipynb: a jupyter notebook showing analysis of hawaii.sqlite resulting in graphs of average temperature and daily normals during 1 - 7 August 2017
 - app.py: a script using flask and queries to hawaii.sqlite to display static and dynamic webpages relating to the  precipitation, station, and temperature data
 
 ### description
@@ -146,6 +150,50 @@ The goal of app.py was to build on the analysis done in climate_starter.ipynb, a
             - return the jsonified temp_for_station_dict
 - allowing the application to run in the Terminal
 
+The goal of temp_analysis1.ipynb was to determine whether there is a statistically significant difference between temperatures in June and December through the years documented in hawaii_measurements.csv. The following steps occurred to carry out that purpose:
+- Loading and processing the source csv into a dataframe
+    - using pd.read_csv to load the CSV into a dataframe (df)
+    - converting the data type of the date column in df from 'string' to 'datetime', so they would be read as dates by python
+    - setting the date column as the index of df
+- Extracting data for target months (June, December)
+    - creating new dataframes (june_df, dec_df) where the month in the date index is limited to '6' (for June) or '12' (for December)
+    - finding the average temperature for June/December (june_mean, dec_mean)
+    - using list comprehensions to create lists (june_temps, dec_temps) to hold the temperature data points for June and December
+- Determining statisical significance between the two lists of temperature data
+    - finding the length of june_temps and dec_temps to see if they have the same amount of data points
+    - conducting a paired t-test
+        - importing the random library to create a sample from the june_temps list that is of the same length as that of dec_temps
+        - creating a for loop to run the paired t-test 10,000 times to try to offset the need to take a sample from the june_temps list
+
+The goal of temp_analysis2.ipynb was to predict the rainfall and temperature during a theoretical future trip to Hawai'i in 1 - 7 August, based on the temperature data from hawaii.sqlite in 1 -7 August 2017. In order to do this, these steps were taken:
+- SQLAlchemy setup
+    - reflecting tables from the database
+        - using Base (automap_base) to show the names of tables within the database (Measurement, Station)
+        - saving the table names as classes for use in the  notebook
+    - using Session(engine) to create a connection between the database and python
+- minimum, maximum, and average temperature over 1-7 August 2017
+    - function calc_temp: queries Measurement table columns tobs (temperature), filtering for data between a user input start date and end date; applying functions func.min(), func. avg() and func.max() to find minimum, average, and maximum temperatures over the time period
+    - using calc_temp for the date range of interest, saving the results to the variables tmin (minimum temperature), tavg(average temperature), tmax (maximum temperature)
+    - bar chart with error bar of the average temperature over 1-7 August
+        - using plt.bar to plot one bar, with the height of the bar representing the average temperature over the chosen time period
+        - the y-error bar is the difference between the minimum temperature and the maximum temperature (peak-to-peak)
+- total rainfall over 1-7 August 2017
+    - using datetime to create date objects of the chosen dates, formatted in the style of the database table dates, for use in queries, saving as variables start_date, end_date 
+    - query to find the total rainfall over the time period
+        - querying the Measurement and Station tables together (join) for each station's name, ID, latitude, longitude, and elevation, 
+        - applying the function func.sum() on the prcp  (precipitation) column to get the total rainfall
+        - filtering for the date range 1-7 August 2017
+        - grouping by station ID
+        - ordering by total rainfall, in descending order
+- daily normals (averages of minimum, maximum, average) of temperature data over 1-7 August for all years
+    - function daily_normals: queries the Measurement column tobs (temperature), applies the functions func.min, func.max, func.avg, filtering for dates that contain a user input month and day number
+    - querying the Measurement table to return all dates are equal to or between start_date and end_date, and appending the results to list date_list
+    - stripping the years from date_list using a list comprehension, to create list date_list_md, for use with daily_normals
+    - using a list comphrension to append the results from applying daily_normals to every element in date_list_md, to list normals
+    - using list comprehensions to split the tuples returned by daily_normals into three lists for temperature minimums, maximums and averages (tmins, tmaxs, tavgs)
+    - using date_list, tmins, tmaxs, and tavgs to make the dataframe normals_df, setting the index as the date
+    - area plot of daily normals
+        - using pd.plot.area to create an area plot of the temperature daily normals for all dates within 1-7 August for each year in the dataset
 ### challenges/observations
 
 The greatest challenge within this project was properly graphing the precipitation data. An initial graphing attempt led to the x axis labels being illegible, as each data point has a 3 part date as a label, and there are 2230 data points to fit on one plot. One solution, if each date had the same amount of data points, would be to label only the first data point for each date. However, the dates varied in terms of how many data points they had, so this could not be done simply. Morever, even if there were an equal amount of data points per date, that would still be 365 labels, which is still unwieldy for a plot. The solution that was implemented was to assign x-ticks, and x-labels, for every 250 points, resulting in 9 labels. This leads to an uncluttered plot and provides a good overview of the year, but reduces clarity, if one wants to trace a spike in data using just the graph. Graphing over smaller spans of time would probably be the best way of visually identifying points of interest. 
