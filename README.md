@@ -80,6 +80,11 @@ The goal of climate_starter.ipynb was to create a bar graph of rainfall over the
         - setting the id column as the index of temps_df
     - graphing the histogram
         - calling .hist() on temps_df, using 12 bins, and a zorder of 3 to have the bars show in front of the grid
+<figure>
+    <img src='images/temp_hist.png'
+         alt="precipitation bar graph for 23 August 2016 - 23 August 2017">
+</figure>
+
 - summary statistics for temperature data
     - calling .describe() on temps_df dataframe
     
@@ -183,6 +188,12 @@ The goal of temp_analysis2.ipynb was to predict the rainfall and temperature dur
     - bar chart with error bar of the average temperature over 1-7 August
         - using plt.bar to plot one bar, with the height of the bar representing the average temperature over the chosen time period
         - the y-error bar is the difference between the minimum temperature and the maximum temperature (peak-to-peak)
+
+<figure>
+    <img src='images/avg_temp_aug.png'
+         alt="precipitation bar graph for 23 August 2016 - 23 August 2017">
+</figure>
+
 - total rainfall over 1-7 August 2017
     - using datetime to create date objects of the chosen dates, formatted in the style of the database table dates, for use in queries, saving as variables start_date, end_date 
     - query to find the total rainfall over the time period
@@ -200,6 +211,11 @@ The goal of temp_analysis2.ipynb was to predict the rainfall and temperature dur
     - using date_list, tmins, tmaxs, and tavgs to make the dataframe normals_df, setting the index as the date
     - area plot of daily normals
         - using pd.plot.area to create an area plot of the temperature daily normals for all dates within 1-7 August for each year in the dataset
+
+<figure>
+    <img src='images/normals_temp_area.png'
+         alt="precipitation bar graph for 23 August 2016 - 23 August 2017">
+</figure>
 
 ### challenges/observations
 
