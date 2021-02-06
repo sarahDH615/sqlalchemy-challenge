@@ -14,7 +14,7 @@ import datetime as dt
 
 
 # Database Setup
-engine = create_engine("sqlite:///hawaii.sqlite")
+engine = create_engine("sqlite:///resources/hawaii.sqlite")
 
 # reflect an existing database into a new model
 Base = automap_base()
@@ -168,6 +168,13 @@ def full_date_lookup(start, end):
             f'error: date not found. Reminder: use yyyymmdd format<br/>'
             f'Years available: {unique_years_list}'
         )
+
+    if end[0:4] not in unique_years_list:
+        return (
+            f'error: date not found. Reminder: use yyyymmdd format<br/>'
+            f'Years available: {unique_years_list}'
+        )  
+          
     #reformatting start and end dates
     start_year = str(start)[0:4]
     start_month = str(start)[4:6]
