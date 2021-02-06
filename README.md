@@ -80,9 +80,9 @@ The goal of climate_starter.ipynb was to create a bar graph of rainfall over the
         - setting the id column as the index of temps_df
     - graphing the histogram
         - calling .hist() on temps_df, using 12 bins, and a zorder of 3 to have the bars show in front of the grid
-<div class='middle'>
+<div align='center'>
     <img src='images/temp_hist.png' 
-        alt="precipitation bar graph for 23 August 2016 - 23 August 2017">
+        alt="histogram of temperature data for most active station id">
 </div>
 
 - summary statistics for temperature data
@@ -191,7 +191,7 @@ The goal of temp_analysis2.ipynb was to predict the rainfall and temperature dur
 
 <div align='center'>
     <img src='images/avg_temp_aug.png'
-         alt="precipitation bar graph for 23 August 2016 - 23 August 2017">
+         alt="average temperature within 1-7 August 2017 bar graph">
 </div>
 
 - total rainfall over 1-7 August 2017
@@ -214,7 +214,7 @@ The goal of temp_analysis2.ipynb was to predict the rainfall and temperature dur
 
 <div align='center'>
     <img src='images/normals_temp_area.png'
-         alt="precipitation bar graph for 23 August 2016 - 23 August 2017">
+         alt="area plot of temperature daily normals for 1-7 August">
 </div>
 
 ### challenges/observations
