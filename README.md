@@ -1,6 +1,6 @@
 # sqlalchemy-challenge
 
-![Rainfall](/images/rainfall.jpg)
+![Beach](/images/beach.jpg)
 
 ### contains
 - resources folder:
