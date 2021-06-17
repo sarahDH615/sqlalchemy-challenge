@@ -1,5 +1,7 @@
 # sqlalchemy-challenge
 
+![Rainfall](/images/rainfall.jpg)
+
 ### contains
 - resources folder:
     - hawaii.sqlite: source database for climate_analysis.ipynb and temp_analysis2.ipynb, containing precipitation, temperature, and station data for weather stations in Hawai'i
